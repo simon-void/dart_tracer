@@ -9,7 +9,7 @@ main() {
   }, when: isDebugMode);
 }
 
-renderSkyImage([int width=200, int height=100, String fileNameBase="second"]) async {
+renderSkyImage([int width=200, int height=100, String fileNameBase="chap3"]) async {
   var sceneDes = new SceneDescription(Camera.defaultCam);
   var renderPane = new BufferedRenderPane(200, 100);
   var tracer = new Tracer();
@@ -19,7 +19,7 @@ renderSkyImage([int width=200, int height=100, String fileNameBase="second"]) as
   await matrixPrinter.print(canvas, fileNameBase, "./img");
 }
 
-renderDefaultImage([int width=200, int height=100, String fileNameBase="first"]) async {
+renderDefaultImage([int width=200, int height=100, String fileNameBase="chap1"]) async {
   var matrixPrinter = new PpmPrinter();
   var matrix = getDefaultMatrix(width, height);
   await matrixPrinter.print(matrix, fileNameBase, "./img");

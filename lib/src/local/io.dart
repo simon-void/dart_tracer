@@ -34,7 +34,7 @@ abstract class MatrixPrinter<E> {
 
     int i = 1;
     while( true ) {
-      fileNameCandidate = "$baseName${_iTo3chars(i++, "0")}.$fileType";
+      fileNameCandidate = "${baseName}_${_iTo3chars(i++, "0")}.$fileType";
       if( await isNewFilename(fileNameCandidate)) {
         return fs.file("${dirPath}/$fileNameCandidate");
       }
