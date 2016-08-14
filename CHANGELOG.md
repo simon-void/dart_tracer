@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.3.0
+
+- Chapter 3 goal reached: added sky-background
+
 ## 0.2.0
 
 - Chapter 2 goal reached: added Vector class with all the required methods

@@ -15,7 +15,7 @@ class BufferedRenderPane extends RenderPane {
   int get width => _pane.columns;
   @override
   int get height => _pane.rows;
-  Future<Matrix<RGB>> get renderedPane => _completer.future;
+  Future<Matrix<RGB>> get canvas => _completer.future;
   final Completer<Matrix<RGB>> _completer = new Completer();
   final Matrix<RGB> _pane;
   BufferedRenderPane(int width, int height):

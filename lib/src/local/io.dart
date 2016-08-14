@@ -34,7 +34,7 @@ abstract class MatrixPrinter<E> {
 
     int i = 1;
     while( true ) {
-      fileNameCandidate = "$baseName$i.$fileType";
+      fileNameCandidate = "$baseName${_iTo3chars(i++, "0")}.$fileType";
       if( await isNewFilename(fileNameCandidate)) {
         return fs.file("${dirPath}/$fileNameCandidate");
       }
@@ -54,18 +54,8 @@ class PpmPrinter extends MatrixPrinter<RGB> {
 
   @override
   List<int> _convertToBytes(Matrix<RGB> matrix) {
-    String ito3chars(int i) {
-      assert(i>=0 && i<256);
-      if(i<10) {
-        return "  $i";
-      }else if(i<100) {
-        return " $i";
-      }else{
-        return i.toString();
-      }
-    }
     String rgb2Str(RGB rgb) =>
-        "${ito3chars(rgb.red)} ${ito3chars(rgb.green)} ${ito3chars(rgb.blue)}";
+        "${_iTo3chars(rgb.red)} ${_iTo3chars(rgb.green)} ${_iTo3chars(rgb.blue)}";
 
     var buffer = new StringBuffer("P3\n");
     buffer.writeln("${matrix.columns} ${matrix.rows}");
@@ -82,5 +72,17 @@ class PpmPrinter extends MatrixPrinter<RGB> {
 
     var content = buffer.toString();
     return _codec.encode(content);
+  }
+}
+
+
+String _iTo3chars(int i, [String seperator= " "]) {
+  assert(i>=0 && i<256);
+  if(i<10) {
+    return "$seperator$seperator$i";
+  }else if(i<100) {
+    return "$seperator$i";
+  }else{
+    return i.toString();
   }
 }

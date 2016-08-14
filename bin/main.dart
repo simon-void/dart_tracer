@@ -2,17 +2,27 @@ import 'package:dart_tracer/dart_tracer_local.dart';
 import 'package:stack_trace/stack_trace.dart';
 
 main() {
-  print("trace world");
   bool isDebugMode = true;
   Chain.capture(() {
-    var matrixPrinter = new PpmPrinter();
-    var matrix = getDefaultMatrix(200, 100);
-    matrixPrinter.print(matrix, "first", "./img").then(
-        (_){
-          print("traced world");
-        }
-    );
+//    renderDefaultImage();
+    renderSkyImage();
   }, when: isDebugMode);
+}
+
+renderSkyImage([int width=200, int height=100, String fileNameBase="second"]) async {
+  var sceneDes = new SceneDescription(Camera.defaultCam);
+  var renderPane = new BufferedRenderPane(200, 100);
+  var tracer = new Tracer();
+  tracer.trace(sceneDes, renderPane);
+  var matrixPrinter = new PpmPrinter();
+  var canvas = await renderPane.canvas;
+  await matrixPrinter.print(canvas, fileNameBase, "./img");
+}
+
+renderDefaultImage([int width=200, int height=100, String fileNameBase="first"]) async {
+  var matrixPrinter = new PpmPrinter();
+  var matrix = getDefaultMatrix(width, height);
+  await matrixPrinter.print(matrix, fileNameBase, "./img");
 }
 
 Matrix<RGB> getDefaultMatrix(int columns, int rows) {

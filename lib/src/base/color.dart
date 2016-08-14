@@ -1,3 +1,8 @@
+int _map01DoubleTo0255Inf(double d) {
+  assert(.0<=d && d<=1.0);
+  return (d*255.99999).toInt();
+}
+
 class RGB{
   static RGB BLACK = new RGB(0, 0, 0);
   static RGB WHITE = new RGB(255, 255, 255);
@@ -13,6 +18,11 @@ class RGB{
     }
     return new RGB._(red, green, blue);
   }
+
+  RGB.fromDoubles(double red, double green, double blue):
+        this._(_map01DoubleTo0255Inf(red),
+          _map01DoubleTo0255Inf(green),
+          _map01DoubleTo0255Inf(blue));
 
   RGB._(this.red, this.green, this.blue) {
     assert(0<=this.red   && this.red<256);
