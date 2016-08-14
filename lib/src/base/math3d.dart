@@ -173,3 +173,19 @@ class Vector {
   @override
   int get hashCode => _v.fold(0, (sum, d)=>37*sum+d.toInt());
 }
+
+/**
+ * return 0-2 solutions of the equation a*x^2 + b*x + c = 0
+ */
+List<double> solveQuadrEq(double a, double b, double c) {
+  final rootSquared = pow(b, 2)-(4*a*c);
+  if(rootSquared<0) {
+    return const [];
+  }
+  if(rootSquared==0) {
+    return [-b/(2*a)];
+  }
+  final root = sqrt(rootSquared);
+  final twoA = 2*a;
+  return [(-b+root)/twoA, (-b-root)/twoA];
+}

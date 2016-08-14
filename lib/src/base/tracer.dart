@@ -22,16 +22,31 @@ class Tracer {
    * prepare the scene, e.g. transform it into an internal representation
    */
   void _prepare(SceneDescription scene) {
-    _camera = scene.camera;
+    _scene = scene;
   }
 
-  Camera _camera;
+  SceneDescription _scene;
   /**
    * trace a
    */
   RGB _tracePixel(int x, int y, int width, int height) {
-    var ray = _camera.getRay(x, width, y, height);
-    return _skyColor(ray);
+    var ray = _scene.camera.getRay(x, width, y, height);
+    double distance = 999999999999999999.9;
+    Renderable closestRenderable;
+    for(var renderable in _scene.renderables) {
+      var currentDistance = renderable.getHitPoint(ray);
+      if(currentDistance!=null) {
+        if(currentDistance<distance) {
+          distance = currentDistance;
+          closestRenderable = renderable;
+        }
+      }
+    }
+    if(closestRenderable!=null) {
+      return closestRenderable.color;
+    }else{
+      return _skyColor(ray);
+    }
   }
 
   RGB _skyColor(Ray ray) {

@@ -6,6 +6,9 @@ int _map01DoubleTo0255Inf(double d) {
 class RGB{
   static RGB BLACK = new RGB(0, 0, 0);
   static RGB WHITE = new RGB(255, 255, 255);
+  static RGB RED = new RGB(255, 0, 0);
+  static RGB GREEN = new RGB(0, 255, 0);
+  static RGB BLUE = new RGB(0, 0, 255);
 
   final int red, green, blue;
 
