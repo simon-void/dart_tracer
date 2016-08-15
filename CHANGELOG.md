@@ -1,5 +1,11 @@
 # Changelog
 
+## 0.4.1
+
+- changed the default Brennweite of my cam (so that the image shows less
+of a distortion effect
+- set up a nice dummy scene
+
 ## 0.4.0
 
 - Chapter 4 goal reached: added sphere class
