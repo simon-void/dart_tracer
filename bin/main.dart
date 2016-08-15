@@ -14,8 +14,8 @@ renderSphereImage([int width=200, int height=100, String fileNameBase="chap4"]) 
 //  var spere3 = new Sphere(vec3(0.8, .5, -2), 0.5, RGB.BLUE);
 //  var spheres = [spere1, spere2, spere3];
   var spheres = getCrosshairSpheres(2, -18);
-  spheres.add(new Sphere(vec3(-1.2, 0, -22), 1.15, RGB.LIGHT_GREY));
-  spheres.add(new Sphere(vec3( 1.2, 0, -22), 1.15, RGB.DARK_GREY));
+  spheres.add(new Sphere(vec3(0,  1.2, -22), 1.15, RGB.LIGHT_GREY));
+  spheres.add(new Sphere(vec3(0, -1.2, -22), 1.15, RGB.DARK_GREY));
   Camera cam = new Camera(vec3(0, 0, 0), vec3(0, 0, -1), vec3(1, 0, 0), 3.0);
   var sceneDes = new SceneDescription(cam, spheres);
   var renderPane = new BufferedRenderPane(width, height);
