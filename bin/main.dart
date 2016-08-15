@@ -4,7 +4,7 @@ import 'package:stack_trace/stack_trace.dart';
 main() {
   bool isDebugMode = true;
   Chain.capture(() {
-    renderSphereImage(400, 400, "cross");
+    renderSphereImage(600, 600, "cross");
   }, when: isDebugMode);
 }
 
@@ -20,7 +20,7 @@ renderSphereImage([int width=200, int height=100, String fileNameBase="chap4"]) 
   var sceneDes = new SceneDescription(cam, spheres);
   var renderPane = new BufferedRenderPane(width, height);
   var tracer = new Tracer();
-  tracer.trace(sceneDes, renderPane);
+  tracer.trace(sceneDes, new LogProgressPaneProxy(renderPane, 10));
   var matrixPrinter = new PpmPrinter();
   var canvas = await renderPane.canvas;
   await matrixPrinter.print(canvas, fileNameBase, "./img");

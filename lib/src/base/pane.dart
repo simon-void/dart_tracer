@@ -34,3 +34,44 @@ class BufferedRenderPane extends RenderPane {
     _completer.complete(_pane);
   }
 }
+
+class LogProgressPaneProxy extends RenderPane {
+  final RenderPane proxiedPane;
+  int _raysRendered = 0;
+  int _raysToRender;
+  int lastStep = 0;
+  final int _logStep;
+
+  LogProgressPaneProxy(this.proxiedPane, this._logStep) {
+    assert(_logStep>0 && _logStep<21);
+    _raysToRender = height*width;
+  }
+
+  @override
+  int get height => proxiedPane.height;
+
+  @override
+  int get width => proxiedPane.width;
+
+  @override
+  paint(int x, int y, RGB color) {
+    proxiedPane.paint(x,y,color);
+    _raysRendered++;
+    int percent = (100*_raysRendered/_raysToRender).toInt();
+    if(percent>=lastStep+_logStep) {
+      print("$percent%");
+      lastStep=percent;
+    }
+  }
+
+  @override
+  start() {
+    proxiedPane.start();
+    print("0%");
+  }
+
+  @override
+  finish() {
+    proxiedPane.finish();
+  }
+}

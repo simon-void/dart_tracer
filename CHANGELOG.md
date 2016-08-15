@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.4.2
+
+- progress logging to the command line
+
 ## 0.4.1
 
 - changed the default Brennweite of my cam (so that the image shows less
