@@ -1,6 +1,15 @@
+import 'package:dart_tracer/src/base/math3d.dart';
+
+//map double[0-1]=>int[0-255]
 int _map01DoubleTo0255Inf(double d) {
   assert(.0<=d && d<=1.0);
   return (d*255.99999).toInt();
+}
+
+//map double[-1-1]=>int[0-255]
+int _map11DoubleTo0255Inf(double d) {
+  assert(-1.0<=d && d<=1.0);
+  return _map01DoubleTo0255Inf((d+1)/2);
 }
 
 class RGB{
@@ -40,4 +49,9 @@ class RGB{
     assert(0<=this.green && this.green<256);
     assert(0<=this.blue  && this.blue<256);
   }
+
+  RGB.byUnitVector(Vector unitVector):
+        this._(_map11DoubleTo0255Inf(unitVector.x),
+          _map11DoubleTo0255Inf(unitVector.y),
+          _map11DoubleTo0255Inf(unitVector.z));
 }

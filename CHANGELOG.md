@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.0
+
+- Chapter 5 goal reached: i visualize normals now
+
 ## 0.4.2
 
 - progress logging to the command line
@@ -8,7 +12,7 @@
 
 - changed the default Brennweite of my cam (so that the image shows less
 of a distortion effect
-- set up a nice dummy scene
+- set up a nice dummy scene (with several spheres in it)
 
 ## 0.4.0
 

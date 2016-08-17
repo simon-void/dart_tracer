@@ -43,7 +43,8 @@ class Tracer {
       }
     }
     if(closestRenderable!=null) {
-      return closestRenderable.color;
+      var hitPoint = ray.point(distance);
+      return new RGB.byUnitVector(closestRenderable.getUnitNormal(hitPoint));
     }else{
       return _skyColor(ray);
     }

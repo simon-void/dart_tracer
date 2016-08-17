@@ -67,6 +67,7 @@ abstract class Renderable {
    * , otherwise null.
    */
   double getHitPoint(Ray ray);
+  Vector getUnitNormal(Vector point);
   RGB get color;
 }
 
@@ -104,5 +105,10 @@ class Sphere extends Renderable {
 
     //t is the distance of the object from the camera
     return t;
+  }
+
+  @override
+  Vector getUnitNormal(Vector point) {
+    return (point-_midPoint).scaleToUnitLength();
   }
 }
