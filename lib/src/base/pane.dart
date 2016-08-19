@@ -6,7 +6,7 @@ abstract class RenderPane {
   int get width;
   int get height;
   start();
-  paint(int x, int y, RGB color);
+  paint(int x, int y, RGB_INT color);
   finish();
 }
 
@@ -15,17 +15,17 @@ class BufferedRenderPane extends RenderPane {
   int get width => _pane.columns;
   @override
   int get height => _pane.rows;
-  Future<Matrix<RGB>> get canvas => _completer.future;
-  final Completer<Matrix<RGB>> _completer = new Completer();
-  final Matrix<RGB> _pane;
+  Future<Matrix<RGB_INT>> get canvas => _completer.future;
+  final Completer<Matrix<RGB_INT>> _completer = new Completer();
+  final Matrix<RGB_INT> _pane;
   BufferedRenderPane(int width, int height):
-        this._pane = new Matrix<RGB>(width, height);
+        this._pane = new Matrix<RGB_INT>(width, height);
 
   @override
   void start() {}
 
   @override
-  void paint(int x, int y, RGB color) {
+  void paint(int x, int y, RGB_INT color) {
     _pane[x][y] = color;
   }
 
@@ -54,7 +54,7 @@ class LogProgressPaneProxy extends RenderPane {
   int get width => proxiedPane.width;
 
   @override
-  paint(int x, int y, RGB color) {
+  paint(int x, int y, RGB_INT color) {
     proxiedPane.paint(x,y,color);
     _raysRendered++;
     int percent = (100*_raysRendered/_raysToRender).toInt();

@@ -1,6 +1,7 @@
 import 'dart:math';
 import 'package:dart_tracer/src/base/color.dart';
 import 'package:dart_tracer/src/base/math3d.dart';
+import 'package:dart_tracer/src/base/util.dart';
 
 class SceneDescription {
   final Camera camera;
@@ -28,9 +29,10 @@ class Camera {
 
 
   Camera.defaultPane(Vector pos, Vector direction, Vector right):
-        this(pos, direction, right, 1.0);
+        this(pos, direction, right, 1.0, 2);
 
-  Camera(Vector pos, Vector frontDir, Vector rightDir, double paneDistance) {
+  Camera(Vector pos, Vector frontDir, Vector rightDir,
+      double paneDistance, int aaSqrtFactor) {
     Vector unitFrontDir = frontDir.scaleToUnitLength();
     Vector unitRightDir = rightDir.scaleToUnitLength();
     //front vector and right vector have to have a 90° angle between them
@@ -39,9 +41,15 @@ class Camera {
     Vector unitUpDir = frontDir.getOrthogonal3D(rightDir).scaleToUnitLength();
     Vector paneMiddlePos = pos + unitFrontDir.scalaMult(paneDistance);
 
-    _antialiasingStrategy = new NoAntialiasingStrategy(
+    assert(aaSqrtFactor>0);
+    if(aaSqrtFactor==1) {
+      _antialiasingStrategy = new NoAntialiasingStrategy(
         pos, paneMiddlePos, unitUpDir, unitRightDir);
-}
+    }else{
+      _antialiasingStrategy = new QuadraticAntialiasingStrategy(
+          pos, paneMiddlePos, unitUpDir, unitRightDir, 2);
+    }
+  }
 
   /**
    * return one or more rays (in case of antialiasing)
@@ -64,9 +72,12 @@ abstract class AntialiasingStrategy {
 }
 
 class NoAntialiasingStrategy extends AntialiasingStrategy {
+  final SingleComputeValue widthScaleFactorC = new SingleComputeValue();
+  final SingleComputeValue heightScaleFactorC = new SingleComputeValue();
 
   NoAntialiasingStrategy(_pos, _paneMiddlePos, _unitUpDir, _unitRightDir):
       super(_pos, _paneMiddlePos, _unitUpDir, _unitRightDir);
+
   /**
    * return one ray (so no antialiasing)
    */
@@ -77,8 +88,10 @@ class NoAntialiasingStrategy extends AntialiasingStrategy {
     double relativY = y/(height-1)-.5;
     // the virtual camera pane is assumed to have a with and height of 1
     // these two parameters will scale it to the ratio of my final image
-    double widthScaleFactor = max(width/height, 1.0);
-    double heightScaleFactor = max(height/width, 1.0);
+    final double widthScaleFactor = widthScaleFactorC.computeOnce(
+        ()=>max(width/height, 1.0));
+    final double heightScaleFactor = heightScaleFactorC.computeOnce(
+        ()=>max(height/width, 1.0));
     // compute where the ray is going through the virtual camera pane
     Vector panePos = _paneMiddlePos +
         _unitRightDir.scalaMult(relativX*widthScaleFactor) +
@@ -87,6 +100,69 @@ class NoAntialiasingStrategy extends AntialiasingStrategy {
     Vector dir = panePos - _pos;
     // returns just a single, middle ray
     return [new Ray(_pos, dir)];
+  }
+}
+
+class QuadraticAntialiasingStrategy extends AntialiasingStrategy {
+  final int _numbersOfRaysRoot;
+  final widthScaleFactorC = new SingleComputeValue();
+  final heightScaleFactorC = new SingleComputeValue();
+  final relativePixelWidthC = new SingleComputeValue();
+  final random = new Random();
+
+  QuadraticAntialiasingStrategy(
+      _pos, _paneMiddlePos, _unitUpDir, _unitRightDir, this._numbersOfRaysRoot):
+        super(_pos, _paneMiddlePos, _unitUpDir, _unitRightDir);
+
+  /**
+   * return pow(_numbersOfRaysRoot,w) number of rays,
+   * that are randomly shaken within their quadrant
+   */
+  @override
+  List<Ray> getRays(int x, final int width, int y, final int height) {
+    //relativX/Y e [-.5, .5[
+    double relativX = x/width-.5;
+    double relativY = y/height-.5;
+    // the virtual camera pane is assumed to have a with and height of 1
+    // these two parameters will scale it to the ratio of my final image
+    final double widthScaleFactor = widthScaleFactorC.computeOnce(
+        ()=>max(width/height, 1.0));
+    final double heightScaleFactor = heightScaleFactorC.computeOnce(
+        ()=>max(height/width, 1.0));
+    final double relPixelWidth = relativePixelWidthC.computeOnce(
+        ()=>(heightScaleFactor/height));
+
+    List<Vector> quadrantPanePositions =
+      getRandomizedQuadrantPoints(relativX, relativY, relPixelWidth,
+          widthScaleFactor, heightScaleFactor);
+
+    // for each position return the ray to that position
+    return new List.from(
+        quadrantPanePositions.map(
+            (Vector randPos)=>new Ray(_pos,randPos-_pos)));
+  }
+
+  List<Vector> getRandomizedQuadrantPoints(
+      double relativStartX, double relativStartY, double relativPixelWidth,
+      double widthScaleFactor, double heightScaleFactor) {
+    final relativeSubpixelWith = relativPixelWidth/_numbersOfRaysRoot;
+    List<Vector> randPos = [];
+    for(int x=0; x<_numbersOfRaysRoot; x++) {
+      for(int y=0; y<_numbersOfRaysRoot; y++) {
+        //randPos = quadrant + randomized Offset in that quadrant
+        double randX = random.nextDouble();
+        double randY = random.nextDouble();
+        double relativX = relativStartX+(x+randX)*relativeSubpixelWith;
+        double relativY = relativStartY+(y+randY)*relativeSubpixelWith;
+
+        Vector subPixel = _paneMiddlePos +
+            _unitRightDir.scalaMult(relativX*widthScaleFactor) +
+            _unitUpDir.scalaMult(relativY*heightScaleFactor);
+
+        randPos.add(subPixel);
+      }
+    }
+    return randPos;
   }
 }
 
@@ -99,13 +175,13 @@ abstract class Renderable {
    */
   double getHitPoint(Ray ray);
   Vector getUnitNormal(Vector point);
-  RGB get color;
+  RGB_INT get color;
 }
 
 class Sphere extends Renderable {
   final Vector _midPoint;
   final double _radius;
-  final RGB color;
+  final RGB_INT color;
 
   Sphere(this._midPoint, this._radius, this.color);
 

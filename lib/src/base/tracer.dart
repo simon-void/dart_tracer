@@ -29,17 +29,18 @@ class Tracer {
   /**
    * trace a
    */
-  RGB _tracePixel(int x, int y, int width, int height) {
+  RGB_INT _tracePixel(int x, int y, int width, int height) {
     var rays = _scene.camera.getRays(x, width, y, height);
-    var colors = new List<RGB>(rays.length);
+    var colors = new List<RGB_DOUBLE>(rays.length);
     rays.asMap().forEach((index, ray) {
       colors[index] = _traceRay(ray);
     });
 
-    return new RGB.mergeRGBs(colors);
+    var rgb_double = new RGB_DOUBLE.merge(colors);
+    return rgb_double.toInt();
   }
 
-  RGB _traceRay(Ray ray) {
+  RGB_DOUBLE _traceRay(Ray ray) {
     double distance = 999999999999999999.9;
     Renderable closestRenderable;
     for(var renderable in _scene.renderables) {
@@ -53,18 +54,18 @@ class Tracer {
     }
     if(closestRenderable!=null) {
       var hitPoint = ray.point(distance);
-      return new RGB.byUnitVector(closestRenderable.getUnitNormal(hitPoint));
+      return new RGB_DOUBLE.byUnitVector(closestRenderable.getUnitNormal(hitPoint));
     }else{
       return _skyColor(ray);
     }
   }
 
-  RGB _skyColor(Ray ray) {
+  RGB_DOUBLE _skyColor(Ray ray) {
     //t as in the book, ray.unitDir.y [-1, 1]
     var t = (ray.unitDir.y+1.0)/2;
     var colorInDoubles =
       vec3(.5, .7, 1).scalaMultEq(t).scalaAddEq(1-t);
-    return new RGB.fromDoubles(
+    return new RGB_DOUBLE(
         colorInDoubles.x,colorInDoubles.y,colorInDoubles.z);
   }
 }

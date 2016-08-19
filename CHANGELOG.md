@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.0
+
+- Chapter 6 goal reached: Antialising
+
 ## 0.5.1
 
 - refactored code to prepare for Antialising.

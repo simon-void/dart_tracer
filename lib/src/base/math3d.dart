@@ -21,6 +21,7 @@ Vector vec3(num x, num y, num z) {
 }
 
 class Vector {
+  static final ZERO_D3 = vec3(0,0,0);
   final List<double> _v;
   double get squaredLength => _v.map((d)=>pow(d, 2)).fold(.0, (sum, d)=>sum+d);
   double get length => sqrt(squaredLength);

@@ -48,13 +48,13 @@ abstract class MatrixPrinter<E> {
   }
 }
 
-class PpmPrinter extends MatrixPrinter<RGB> {
+class PpmPrinter extends MatrixPrinter<RGB_INT> {
   final String fileType = "ppm";
   final AsciiCodec _codec = const AsciiCodec();
 
   @override
-  List<int> _convertToBytes(Matrix<RGB> matrix) {
-    String rgb2Str(RGB rgb) =>
+  List<int> _convertToBytes(Matrix<RGB_INT> matrix) {
+    String rgb2Str(RGB_INT rgb) =>
         "${_iTo3chars(rgb.red)} ${_iTo3chars(rgb.green)} ${_iTo3chars(rgb.blue)}";
 
     var buffer = new StringBuffer("P3\n");
