@@ -4,7 +4,7 @@ import 'package:stack_trace/stack_trace.dart';
 main() {
   bool isDebugMode = true;
   Chain.capture(() {
-    renderSphereImage(200, 200, "cross");
+    renderSphereImage(400, 400, "cross");
   }, when: isDebugMode);
 }
 
@@ -12,7 +12,7 @@ renderSphereImage([int width=200, int height=100, String fileNameBase="chap4"]) 
   var spheres = getCrosshairSpheres(2, -18);
   spheres.add(new Sphere(vec3(0,  1.2, -22), 1.15, RGB_INT.LIGHT_GREY));
   spheres.add(new Sphere(vec3(0, -1.2, -22), 1.15, RGB_INT.DARK_GREY));
-  Camera cam = new Camera(vec3(0, 0, 0), vec3(0, 0, -1), vec3(1, 0, 0), 3.0, 2);
+  Camera cam = new Camera(vec3(0, 0, 0), vec3(0, 0, -1), vec3(1, 0, 0), 3.0, 3);
   var sceneDes = new SceneDescription(cam, spheres);
   var renderPane = new BufferedRenderPane(width, height);
   var tracer = new Tracer();

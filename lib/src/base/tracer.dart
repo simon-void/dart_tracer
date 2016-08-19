@@ -5,6 +5,7 @@ import 'package:dart_tracer/src/base/scene.dart';
 
 
 class Tracer {
+
   void trace(SceneDescription scene, RenderPane pane) {
     _prepare(scene);
 

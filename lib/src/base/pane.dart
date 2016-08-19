@@ -37,6 +37,7 @@ class BufferedRenderPane extends RenderPane {
 
 class LogProgressPaneProxy extends RenderPane {
   final RenderPane proxiedPane;
+  final Stopwatch _stopwatch = new Stopwatch();
   int _raysRendered = 0;
   int _raysToRender;
   int lastStep = 0;
@@ -68,10 +69,14 @@ class LogProgressPaneProxy extends RenderPane {
   start() {
     proxiedPane.start();
     print("0%");
+    _stopwatch.reset();
+    _stopwatch.start();
   }
 
   @override
   finish() {
+    _stopwatch.stop();
     proxiedPane.finish();
+    print("elapsed time: ${_stopwatch.elapsed}");
   }
 }

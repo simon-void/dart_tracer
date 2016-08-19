@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.6.1
+
+- the renderprocess is not timed
+
 ## 0.6.0
 
 - Chapter 6 goal reached: Antialising
