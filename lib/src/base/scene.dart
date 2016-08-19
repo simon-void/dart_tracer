@@ -24,24 +24,54 @@ class Ray {
 class Camera {
   static final Camera defaultCam = new Camera.defaultPane(
       vec3(0, 0, 0), vec3(0, 0, -1), vec3(1, 0, 0));
-  final Vector _pos, _unitFrontDir, _unitRightDir, _unitUpDir;
-  Vector _paneMiddlePos;
+  AntialiasingStrategy _antialiasingStrategy;
 
 
   Camera.defaultPane(Vector pos, Vector direction, Vector right):
         this(pos, direction, right, 1.0);
 
-  Camera(Vector pos, Vector frontDir, Vector rightDir, double paneDistance):
-        _pos = pos,
-        _unitFrontDir = frontDir.scaleToUnitLength(),
-        _unitRightDir = rightDir.scaleToUnitLength(),
-        _unitUpDir = frontDir.getOrthogonal3D(rightDir).scaleToUnitLength() {
+  Camera(Vector pos, Vector frontDir, Vector rightDir, double paneDistance) {
+    Vector unitFrontDir = frontDir.scaleToUnitLength();
+    Vector unitRightDir = rightDir.scaleToUnitLength();
     //front vector and right vector have to have a 90° angle between them
-    assert(_unitFrontDir.isOrthogonal(_unitRightDir));
-    _paneMiddlePos = _pos + _unitFrontDir.scalaMult(paneDistance);
+    assert(unitFrontDir.isOrthogonal(unitRightDir));
+
+    Vector unitUpDir = frontDir.getOrthogonal3D(rightDir).scaleToUnitLength();
+    Vector paneMiddlePos = pos + unitFrontDir.scalaMult(paneDistance);
+
+    _antialiasingStrategy = new NoAntialiasingStrategy(
+        pos, paneMiddlePos, unitUpDir, unitRightDir);
+}
+
+  /**
+   * return one or more rays (in case of antialiasing)
+   */
+  List<Ray> getRays(int x, int width, int y, int height) {
+    return _antialiasingStrategy.getRays(x, width, y, height);
+  }
+}
+
+abstract class AntialiasingStrategy {
+  final Vector _pos, _unitRightDir, _unitUpDir, _paneMiddlePos;
+
+  AntialiasingStrategy(this._pos, this._paneMiddlePos,
+                       this._unitUpDir, this._unitRightDir) {
+    //front vector and right vector have to have a 90° angle between them
+    assert(_unitUpDir.isOrthogonal(_unitRightDir));
   }
 
-  Ray getRay(int x, int width, int y, int height) {
+  List<Ray> getRays(int x, int width, int y, int height);
+}
+
+class NoAntialiasingStrategy extends AntialiasingStrategy {
+
+  NoAntialiasingStrategy(_pos, _paneMiddlePos, _unitUpDir, _unitRightDir):
+      super(_pos, _paneMiddlePos, _unitUpDir, _unitRightDir);
+  /**
+   * return one ray (so no antialiasing)
+   */
+  @override
+  List<Ray> getRays(int x, int width, int y, int height) {
     //relativX/Y e [-.5, .5]
     double relativX = x/(width-1)-.5;
     double relativY = y/(height-1)-.5;
@@ -55,7 +85,8 @@ class Camera {
         _unitUpDir.scalaMult(relativY*heightScaleFactor);
 
     Vector dir = panePos - _pos;
-    return new Ray(_pos, dir);
+    // returns just a single, middle ray
+    return [new Ray(_pos, dir)];
   }
 }
 

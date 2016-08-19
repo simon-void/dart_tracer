@@ -30,7 +30,16 @@ class Tracer {
    * trace a
    */
   RGB _tracePixel(int x, int y, int width, int height) {
-    var ray = _scene.camera.getRay(x, width, y, height);
+    var rays = _scene.camera.getRays(x, width, y, height);
+    var colors = new List<RGB>(rays.length);
+    rays.asMap().forEach((index, ray) {
+      colors[index] = _traceRay(ray);
+    });
+
+    return new RGB.mergeRGBs(colors);
+  }
+
+  RGB _traceRay(Ray ray) {
     double distance = 999999999999999999.9;
     Renderable closestRenderable;
     for(var renderable in _scene.renderables) {

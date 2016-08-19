@@ -39,6 +39,11 @@ class RGB{
     return new RGB._(red, green, blue);
   }
 
+  factory RGB.mergeRGBs (List<RGB> colors) {
+    // TODO real merge
+    return colors[0];
+  }
+
   RGB.fromDoubles(double red, double green, double blue):
         this._(_map01DoubleTo0255Inf(red),
           _map01DoubleTo0255Inf(green),

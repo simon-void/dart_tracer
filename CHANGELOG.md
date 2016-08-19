@@ -1,5 +1,9 @@
 # Changelog
 
+## 0.5.1
+
+- refactored code to prepare for Antialising.
+
 ## 0.5.0
 
 - Chapter 5 goal reached: i visualize normals now
