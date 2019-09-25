@@ -1,7 +1,8 @@
 import 'dart:async';
 import 'dart:io' as dart show File;
 import 'dart:convert' show AsciiCodec;
-import 'package:file/io.dart';
+import 'package:file/file.dart';
+import 'package:file/local.dart';
 import 'package:dart_tracer/src/base/math3d.dart';
 import 'package:dart_tracer/src/base/color.dart';
 
@@ -24,7 +25,7 @@ abstract class MatrixPrinter<E> {
     Future<bool> isNewFilename(String filename) async {
       var filePath = "${dirPath}/$filename";
       FileSystemEntityType type = await fs.type(filePath);
-      return type==FileSystemEntityType.NOT_FOUND;
+      return type==FileSystemEntityType.notFound;
     }
 
     var fileNameCandidate = "$baseName.$fileType";

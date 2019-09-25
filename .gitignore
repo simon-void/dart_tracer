@@ -1,9 +1,9 @@
 # Files and directories created by pub
 .packages
 .pub/
+.dart_tool/
 build/
 **/packages
-pubspec.lock
 
 # Files created by dart2js
 *.dart.js

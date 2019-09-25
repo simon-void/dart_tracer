@@ -58,7 +58,7 @@ class LogProgressPaneProxy extends RenderPane {
   paint(int x, int y, RGB_INT color) {
     proxiedPane.paint(x,y,color);
     _raysRendered++;
-    int percent = (100*_raysRendered/_raysToRender).toInt();
+    int percent = (100*_raysRendered)~/_raysToRender;
     if(percent>=lastStep+_logStep) {
       print("$percent%");
       lastStep=percent;

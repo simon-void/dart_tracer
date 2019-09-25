@@ -16,7 +16,7 @@ class Ray {
         unitDir = direction.scaleToUnitLength();
 
   Vector point(double t) {
-    //we are only interessted in points before the camera
+    //we are only interested in points before the camera
     assert(!t.isNegative);
     return origin+unitDir.scalaMult(t);
   }
