@@ -18,7 +18,7 @@ class Ray {
   Vector point(double t) {
     //we are only interested in points before the camera
     assert(!t.isNegative);
-    return origin+unitDir.scalaMult(t);
+    return origin+unitDir.scalaMulti(t);
   }
 }
 
@@ -39,7 +39,7 @@ class Camera {
     assert(unitFrontDir.isOrthogonal(unitRightDir));
 
     Vector unitUpDir = frontDir.getOrthogonal3D(rightDir).scaleToUnitLength();
-    Vector paneMiddlePos = pos + unitFrontDir.scalaMult(paneDistance);
+    Vector paneMiddlePos = pos + unitFrontDir.scalaMulti(paneDistance);
 
     assert(aaSqrtFactor>0);
     if(aaSqrtFactor==1) {
@@ -83,9 +83,9 @@ class NoAntialiasingStrategy extends AntialiasingStrategy {
    */
   @override
   List<Ray> getRays(int x, int width, int y, int height) {
-    //relativX/Y e [-.5, .5]
-    double relativX = x/(width-1)-.5;
-    double relativY = y/(height-1)-.5;
+    //relativeX/Y e [-.5, .5]
+    double relativeX = x/(width-1)-.5;
+    double relativeY = y/(height-1)-.5;
     // the virtual camera pane is assumed to have a with and height of 1
     // these two parameters will scale it to the ratio of my final image
     final double widthScaleFactor = widthScaleFactorC.computeOnce(
@@ -94,8 +94,8 @@ class NoAntialiasingStrategy extends AntialiasingStrategy {
         ()=>max(height/width, 1.0));
     // compute where the ray is going through the virtual camera pane
     Vector panePos = _paneMiddlePos +
-        _unitRightDir.scalaMult(relativX*widthScaleFactor) +
-        _unitUpDir.scalaMult(relativY*heightScaleFactor);
+        _unitRightDir.scalaMulti(relativeX*widthScaleFactor) +
+        _unitUpDir.scalaMulti(relativeY*heightScaleFactor);
 
     Vector dir = panePos - _pos;
     // returns just a single, middle ray
@@ -120,9 +120,9 @@ class QuadraticAntialiasingStrategy extends AntialiasingStrategy {
    */
   @override
   List<Ray> getRays(int x, final int width, int y, final int height) {
-    //relativX/Y e [-.5, .5[
-    double relativX = x/width-.5;
-    double relativY = y/height-.5;
+    //relativeX/Y e [-.5, .5[
+    double relativeX = x/width-.5;
+    double relativeY = y/height-.5;
     // the virtual camera pane is assumed to have a with and height of 1
     // these two parameters will scale it to the ratio of my final image
     final double widthScaleFactor = widthScaleFactorC.computeOnce(
@@ -133,7 +133,7 @@ class QuadraticAntialiasingStrategy extends AntialiasingStrategy {
         ()=>(heightScaleFactor/height));
 
     List<Vector> quadrantPanePositions =
-      getRandomizedQuadrantPoints(relativX, relativY, relPixelWidth,
+      getRandomizedQuadrantPoints(relativeX, relativeY, relPixelWidth,
           widthScaleFactor, heightScaleFactor);
 
     // for each position return the ray to that position
@@ -143,21 +143,21 @@ class QuadraticAntialiasingStrategy extends AntialiasingStrategy {
   }
 
   List<Vector> getRandomizedQuadrantPoints(
-      double relativStartX, double relativStartY, double relativPixelWidth,
+      double relativeStartX, double relativeStartY, double relativePixelWidth,
       double widthScaleFactor, double heightScaleFactor) {
-    final relativeSubpixelWith = relativPixelWidth/_numbersOfRaysRoot;
+    final relativeSubpixelWith = relativePixelWidth/_numbersOfRaysRoot;
     List<Vector> randPos = [];
     for(int x=0; x<_numbersOfRaysRoot; x++) {
       for(int y=0; y<_numbersOfRaysRoot; y++) {
         //randPos = quadrant + randomized Offset in that quadrant
         double randX = random.nextDouble();
         double randY = random.nextDouble();
-        double relativX = relativStartX+(x+randX)*relativeSubpixelWith;
-        double relativY = relativStartY+(y+randY)*relativeSubpixelWith;
+        double relativeX = relativeStartX+(x+randX)*relativeSubpixelWith;
+        double relativeY = relativeStartY+(y+randY)*relativeSubpixelWith;
 
         Vector subPixel = _paneMiddlePos +
-            _unitRightDir.scalaMult(relativX*widthScaleFactor) +
-            _unitUpDir.scalaMult(relativY*heightScaleFactor);
+            _unitRightDir.scalaMulti(relativeX*widthScaleFactor) +
+            _unitUpDir.scalaMulti(relativeY*heightScaleFactor);
 
         randPos.add(subPixel);
       }
@@ -189,14 +189,14 @@ class Sphere extends Renderable {
   double getHitPoint(Ray ray) {
     // create a quadratic equation of type a*x^2+b*x+c=0
     // with ray.pos+x*ray.dir = hitpoint of the ray with the sphere
-    // return the smalest solution with x>0 (if that exist)
+    // return the smallest solution with x>0 (if that exist)
     final a = ray.unitDir.dot(ray.unitDir);
     final aMinusC = ray.origin-_midPoint;
     final b = ray.unitDir.dot(aMinusC)*2;
     final c = aMinusC.squaredLength-pow(_radius,2);
 
     // we are only interested in solutions in front of the camera
-    Iterable<double> positiveSolutions = solveQuadrEq(a, b, c).where((d)=>d>0);
+    Iterable<double> positiveSolutions = solveQuadraticEq(a, b, c).where((d)=>d>0);
 
     if(positiveSolutions.isEmpty) {
       return null;

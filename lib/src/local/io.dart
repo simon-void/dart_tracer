@@ -77,12 +77,12 @@ class PpmPrinter extends MatrixPrinter<RGB_INT> {
 }
 
 
-String _iTo3chars(int i, [String seperator= " "]) {
+String _iTo3chars(int i, [String separator= " "]) {
   assert(i>=0 && i<256);
   if(i<10) {
-    return "$seperator$seperator$i";
+    return "$separator$separator$i";
   }else if(i<100) {
-    return "$seperator$i";
+    return "$separator$i";
   }else{
     return i.toString();
   }

@@ -65,7 +65,7 @@ class Tracer {
     //t as in the book, ray.unitDir.y [-1, 1]
     var t = (ray.unitDir.y+1.0)/2;
     var colorInDoubles =
-      vec3(.5, .7, 1).scalaMultEq(t).scalaAddEq(1-t);
+      vec3(.5, .7, 1).scalaMultiEq(t).scalaAddEq(1-t);
     return new RGB_DOUBLE(
         colorInDoubles.x,colorInDoubles.y,colorInDoubles.z);
   }

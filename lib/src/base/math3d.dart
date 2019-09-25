@@ -112,14 +112,14 @@ class Vector {
 
   void  plusEq(Vector o) => _combineEq(o, (d1, d2)=>d1+d2);
   void minusEq(Vector o) => _combineEq(o, (d1, d2)=>d1-d2);
-  void  multEq(Vector o) => _combineEq(o, (d1, d2)=>d1*d2);
+  void multiEq(Vector o) => _combineEq(o, (d1, d2)=>d1*d2);
   void   divEq(Vector o) => _combineEq(o, (d1, d2)=>d1/d2);
 
-  Vector scalaMult  (final double value) => new Vector(_v.map((d)=>d*value));
-  Vector  scalaDiv  (final double value) => new Vector(_v.map((d)=>d/value));
-  Vector scalaMultEq(final double value) => _replace((d)=>d*value);
-  Vector  scalaDivEq(final double value) => _replace((d)=>d/value);
-  Vector  scalaAddEq(final double value) => _replace((d)=>d+value);
+  Vector   scalaMulti(final double value) => new Vector(_v.map((d)=>d*value));
+  Vector     scalaDiv(final double value) => new Vector(_v.map((d)=>d/value));
+  Vector scalaMultiEq(final double value) => _replace((d)=>d*value);
+  Vector   scalaDivEq(final double value) => _replace((d)=>d/value);
+  Vector   scalaAddEq(final double value) => _replace((d)=>d+value);
 
 
   double dot(Vector o) {
@@ -178,7 +178,7 @@ class Vector {
 /**
  * return 0-2 solutions of the equation a*x^2 + b*x + c = 0
  */
-List<double> solveQuadrEq(double a, double b, double c) {
+List<double> solveQuadraticEq(double a, double b, double c) {
   final rootSquared = pow(b, 2)-(4*a*c);
   if(rootSquared<0) {
     return const [];

@@ -73,8 +73,8 @@ class RGB_DOUBLE {
         _map01DoubleTo0255(blue));
 
   factory RGB_DOUBLE.merge (List<RGB_DOUBLE> colors) {
-    // you have to quadrate the color values first
-    // (because the sqrt of photones are stored, because humans are better at
+    // you have to square the color values first
+    // (because the square root of photons are stored, because humans are better at
     // distinguishing small difference at dark scenes)
     // https://www.youtube.com/watch?v=LKnqECcg6Gw
 
